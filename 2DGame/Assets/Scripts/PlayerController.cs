@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     private LayerMask selectedLayerMask;
     private Rigidbody2D playerRB;
     private Transform checkGround;
+    private Animator playerAnimator;
 
     [SerializeField]
     private float moveSpeed;
@@ -16,12 +17,21 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float jumpForce;
     private bool isGrounded;
+    private int IDSpeed;
+    private int IDIsGrounded;
 
 
     private void Awake()
     {
         playerRB = GetComponent<Rigidbody2D>();
+    }
+
+    private void Start()
+    {
         checkGround = GameObject.Find("CheckGround").GetComponent<Transform>();
+        playerAnimator = GameObject.Find("StandupPlayer").GetComponent<Animator>();
+        IDSpeed = Animator.StringToHash("speed");
+        IDIsGrounded = Animator.StringToHash("isGrounded");
     }
 
     // Update is called once per frame
@@ -30,6 +40,7 @@ public class PlayerController : MonoBehaviour
         Move();
         Jump();
         CheckDirection();
+        SetAnimations();
     }
 
     private void Move()
@@ -53,5 +64,11 @@ public class PlayerController : MonoBehaviour
             transform.localScale = new Vector3(-1, 1, 1);
         if (playerRB.velocity.x > 0)
             transform.localScale = Vector3.one;
+    }
+
+    private void SetAnimations()
+    {
+        playerAnimator.SetBool(IDIsGrounded, isGrounded);
+        playerAnimator.SetFloat(IDSpeed, Mathf.Abs(inputX));
     }
 }
